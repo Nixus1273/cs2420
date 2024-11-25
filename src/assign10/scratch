@@ -1,0 +1,19 @@
+while (2 * current + 1 < size()) { // how to check if both right and left are not null
+            if (innerCompare(array[current], this.array[2 * current + 1]) > 0
+                    || innerCompare(array[current], this.array[2 * current + 2]) > 0) {
+                if (2 * current + 2 <= size() + 1) {
+                    if (innerCompare(array[2 * current + 1], this.array[2 * current + 2]) > 0) { // if right is smaller
+                        swap(current, 2 * current + 1);
+                        current = 2 * current + 2;
+                    } else { // if left is smaller
+                        swap(current, 2 * current + 2);
+                        current = 2 * current + 1;
+                    }
+                } else {
+                    swap(current, 2 * current + 1);
+                    current = 2 * current + 1;
+                }
+            } else {
+                break;
+            }
+        }
