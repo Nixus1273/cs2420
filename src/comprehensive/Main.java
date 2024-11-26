@@ -26,9 +26,11 @@ public class Main {
             System.out.println("11.  Quit");
 
             System.out.print("Select an option: "); // TODO: what if they put in not a number?
-            int choice = scanner.nextInt();
-
-
+            try {
+                int choice = scanner.nextInt();
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Selection must be an integer.");
+            }
 
             switch (choice) {
                 case 1:
@@ -41,8 +43,6 @@ public class Main {
 //                    if(){
 //
 //                    }
-
-
                     break;
                 case 4:
                     break;
@@ -53,6 +53,7 @@ public class Main {
                 case 7:
                     break;
                 case 8:
+                    // TODO: find a way to access the definition without having to use the whole thing?
                     break;
                 case 9:
                     break;

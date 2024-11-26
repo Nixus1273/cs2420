@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Word {
 
-    private final String word;
+    private String word;
     private TreeMap<Definition, Definition> definitions = new TreeMap<>(new DefinitionComparator());
 
     public Word (String word, String POS, String def) {
@@ -31,6 +31,10 @@ public class Word {
     public void addDefinition(String POS, String def) {
         Definition d = new Definition(POS, def);
         this.definitions.put(d, d);
+    }
+
+    public String getWord() {
+        return this.word;
     }
 
 
