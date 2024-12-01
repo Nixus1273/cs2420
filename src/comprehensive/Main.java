@@ -21,6 +21,7 @@ public class Main {
             glossary.add(data[0], data[1], data[2]);
         }
 
+
         Scanner scanner = new Scanner(System.in);
         boolean on = true;
         while (on) {
