@@ -32,7 +32,7 @@ public class GlossaryTest {
 
     @Test
     void testWordInRange() {
-        System.out.println(glossary.wordInRange("graph", "queue"));
+        System.out.println(glossary.getWordsInRange("graph", "queue"));
     }
 
     @Test
@@ -42,21 +42,21 @@ public class GlossaryTest {
 
     @Test
     void testGetFirstWord() {
-        System.out.println(glossary.getWordFirst());
+        System.out.println(glossary.getFirst());
     }
 
     @Test
     void testGetLastWord() {
-        System.out.println(glossary.getWordLast());
+        System.out.println(glossary.getLast());
     }
 
     @Test
     void testGetPOS() {
-        System.out.println(glossary.getWordPOS("generic"));
+        System.out.println(glossary.getPOS("generic"));
     }
 
     @Test
     void testWordDef() {
-        System.out.println(glossary.getWordDef("generic"));
+        System.out.println(glossary.getDef("generic"));
     }
 }

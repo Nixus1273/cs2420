@@ -4,10 +4,10 @@ import java.util.*;
 
 public class Glossary {
 
-    private TreeMap<String, Word> gloss = new TreeMap<>(Comparator.naturalOrder());
+    private final TreeMap<String, Word> gloss = new TreeMap<>(Comparator.naturalOrder());
     private int wordCount;
     private int defCount;
-    private ArrayList<String> posCount;
+    private final ArrayList<String> posCount;
 
     public Glossary() {
         this.wordCount = 0;
@@ -19,7 +19,7 @@ public class Glossary {
         if (gloss.containsKey(word)) {
             gloss.get(word).addDefinition(POS, def);
         } else {
-            gloss.put(word, new Word(word, POS, def));
+            gloss.put(word, new Word(POS, def));
             wordCount++;
         }
         defCount++;
@@ -38,67 +38,67 @@ public class Glossary {
                 "last word: " + gloss.lastKey() + "\n";
     }
 
-    public String wordInRange(String src, String dst) {
+    public String getWordsInRange(String src, String dst) {
         if(!gloss.containsKey(src) && !gloss.containsKey(dst)) {
-            return "Not valid words"; // TODO: Throw an error or what happens if a word isn't in the gloss????
+            return "";
         }
 
         NavigableSet<String> list = gloss.subMap(src, true, dst, true).navigableKeySet();
-        String returnRange = "The words between " + src + " and " + dst +  " are:" + "\n";
+        StringBuilder returnRange = new StringBuilder();
         for (String word: list) {
-            returnRange += "\t" + word + "\n";
+            returnRange.append("\t").append(word).append("\n");
         }
 
-        return returnRange;
+        return returnRange.toString();
     }
 
     public String getWord(String word) {
         if(!gloss.containsKey(word))
             return word + " not found\n";
 
-        String returnDefs = word + "\n";
+        StringBuilder returnDefs = new StringBuilder(word + "\n");
         Collection<Word.Definition> defs = gloss.get(word).getDefinitions();
         for (Word.Definition def : defs) {
-            returnDefs +=  "\t" + def.getPOS() + ".\t" + def.getDef() + "\n";
+            returnDefs.append("\t").append(def.POS()).append(".\t").append(def.def()).append("\n");
         }
 
-        return returnDefs;
+        return returnDefs.toString();
     }
 
-    public String getWordFirst(){
+    public String getFirst(){
         return getWord(gloss.firstKey());
     }
 
-    public String getWordLast(){
+    public String getLast(){
         return getWord(gloss.lastKey());
     }
 
-    public String getWordPOS(String word) {
+    public String getPOS(String word) {
         if(!gloss.containsKey(word))
             return word + " not found\n";
 
-        return word + "\n" + gloss.get(word).getAllPos();
+        return word + "\n" + gloss.get(word).getAllPOS();
     }
 
-    public ArrayList<Word.Definition> getWordDef(String word){
+    public ArrayList<Word.Definition> getDef(String word){
         return gloss.get(word).getDefinitions();
     }
 
-    public boolean containsWord(String word) {
+    public boolean contains(String word) {
         return gloss.containsKey(word);
     }
 
-    public void changeDefOfWord(String word, Word.Definition oldDef, String newDef){
+    public void changeDef(String word, Word.Definition oldDef, String newDef){
         gloss.get(word).updateDefinition(oldDef, newDef);
     }
 
-    public void removeDefOfWord(String word, Word.Definition oldDef) {
+    public void removeDef(String word, Word.Definition oldDef) {
         gloss.get(word).removeDefinition(oldDef);
         if(gloss.get(word).numberOfDefinitions() == 0)
             gloss.remove(word);
     }
 
-    public void addDefOfWord(String word, String POS, String def) {
+    public void addDef(String word, String POS, String def) {
         gloss.get(word).addDefinition(POS, def);
     }
 }
