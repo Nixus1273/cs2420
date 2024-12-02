@@ -16,7 +16,7 @@ public class Glossary {
     }
 
     public void add(String word, String POS, String def) {
-        if (gloss.containsKey(word)) {
+        if (contains(word)) {
             gloss.get(word).addDefinition(POS, def);
         } else {
             gloss.put(word, new Word(POS, def));
@@ -39,12 +39,9 @@ public class Glossary {
     }
 
     public String getWordsInRange(String src, String dst) {
-        if(!gloss.containsKey(src) && !gloss.containsKey(dst)) {
-            return "";
-        }
-
         NavigableSet<String> list = gloss.subMap(src, true, dst, true).navigableKeySet();
         StringBuilder returnRange = new StringBuilder();
+
         for (String word: list) {
             returnRange.append("\t").append(word).append("\n");
         }
@@ -53,9 +50,6 @@ public class Glossary {
     }
 
     public String getWord(String word) {
-        if(!gloss.containsKey(word))
-            return word + " not found\n";
-
         StringBuilder returnDefs = new StringBuilder(word + "\n");
         Collection<Word.Definition> defs = gloss.get(word).getDefinitions();
         for (Word.Definition def : defs) {
@@ -74,9 +68,6 @@ public class Glossary {
     }
 
     public String getPOS(String word) {
-        if(!gloss.containsKey(word))
-            return word + " not found\n";
-
         return word + "\n" + gloss.get(word).getAllPOS();
     }
 
