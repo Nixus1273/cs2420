@@ -11,8 +11,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws IOException {
         //TODO change file location!
-//        Glossary glossary = createGlossary(args[0]);
-        Glossary glossary = createGlossary("C:\\Users\\Ethan Laynor\\Desktop\\Intellij\\cs2420\\2420_glossary.txt");
+        Glossary glossary = createGlossary(args[0]);
+//        Glossary glossary = createGlossary("C:\\Users\\Ethan Laynor\\Desktop\\Intellij\\cs2420\\2420_glossary.txt");
 
         Scanner scanner = new Scanner(System.in);
         boolean application  = true;
@@ -44,7 +44,6 @@ public class Main {
                 case 8 -> option8(glossary, scanner);
                 case 9 -> option9(glossary, scanner);
 
-                //TODO: rewrite all the definitions to the file
                 case 10 -> option10(glossary,scanner);
 
                 case 11 -> {
@@ -83,6 +82,7 @@ public class Main {
 
     public static void option1(Glossary glossary){
         System.out.println("\n" + glossary.getMetadata());
+
     }
 
 
