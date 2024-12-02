@@ -4,9 +4,9 @@ import java.util.*;
 
 public class Word {
     private final TreeMap<Definition, Definition> definitions = new TreeMap<>(new DefinitionComparator());
+    Integer[] posCount = new Integer[]{0, 0, 0, 0, 0, 0, 0, 0};
     ArrayList<String> validPOS = new ArrayList<>(Arrays.asList(
             "adj", "adv", "conj", "interj", "noun", "prep", "pron", "verb"));
-    Integer[] posCount = new Integer[]{0, 0, 0, 0, 0, 0, 0, 0};
 
     public Word (String POS, String def) {
         addDefinition(POS, def);
