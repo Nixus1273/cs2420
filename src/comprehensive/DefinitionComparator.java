@@ -12,6 +12,3 @@ public class DefinitionComparator implements Comparator<Word.Definition> {
         }
     }
 }
-
-
-
