@@ -32,12 +32,12 @@ public class GlossaryTest {
 
     @Test
     void testWordInRange() {
-        System.out.println(glossary.getWordsInRange("graph", "queue"));
+        System.out.println(glossary.getInRange("graph", "queue"));
     }
 
     @Test
     void testGetDefinitions() {
-        System.out.println(glossary.getWord("tree"));
+        System.out.println(glossary.get("tree"));
     }
 
     @Test

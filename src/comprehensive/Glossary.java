@@ -4,41 +4,49 @@ import java.util.*;
 
 public class Glossary {
 
-    private final TreeMap<String, Word> gloss = new TreeMap<>(Comparator.naturalOrder());
+    private final TreeMap<String, Definitions> gloss = new TreeMap<>(Comparator.naturalOrder());
     private int wordCount;
     private int defCount;
-    private final ArrayList<String> posCount;
+//    private final ArrayList<String> posCount;
+
+    ArrayList<String> validPOS = new ArrayList<>(Arrays.asList(
+            "adj", "adv", "conj", "interj", "noun", "prep", "pron", "verb"));
+    Integer[] posCount = new Integer[]{0, 0, 0, 0, 0, 0, 0, 0};
+
 
     public Glossary() {
         this.wordCount = 0;
         this.defCount = 0;
-        this.posCount = new ArrayList<>();
+//        this.posCount = new ArrayList<>();
     }
+
+
 
     public void add(String word, String POS, String def) {
         if (contains(word)) {
-            gloss.get(word).addDefinition(POS, def);
+            gloss.get(word).add(POS, def);
         } else {
-            gloss.put(word, new Word(POS, def));
+            gloss.put(word, new Definitions(POS, def));
             wordCount++;
         }
         defCount++;
 
-        if (!posCount.contains(POS)) {
-            posCount.add(POS);
-        }
+        posCount[validPOS.indexOf(POS)] += 1;
+
     }
+
 
     public String getMetadata() {
         return  "word: " + wordCount + "\n" +
                 "definitions: " + defCount + "\n" +
                 "definitions per word: " +  String.format("%.3f", (double)defCount / wordCount) + "\n" +
-                "parts of speech: " + posCount.size() + "\n" +
+                "parts of speech: "  + "\n" +
                 "first word: " + gloss.firstKey() + "\n" +
                 "last word: " + gloss.lastKey() + "\n";
     }
 
-    public String getWordsInRange(String src, String dst) {
+
+    public String getInRange(String src, String dst) {
         NavigableSet<String> list = gloss.subMap(src, true, dst, true).navigableKeySet();
         StringBuilder returnRange = new StringBuilder();
 
@@ -49,54 +57,65 @@ public class Glossary {
         return returnRange.toString();
     }
 
-    public String getWord(String word) {
+
+    public String get(String word) {
         StringBuilder returnDefs = new StringBuilder(word + "\n");
-        Collection<Word.Definition> defs = gloss.get(word).getDefinitions();
-        for (Word.Definition def : defs) {
+        Collection<Definitions.Definition> defs = gloss.get(word).getAll();
+        for (Definitions.Definition def : defs) {
             returnDefs.append("\t").append(def.POS()).append(".\t").append(def.def()).append("\n");
         }
-
         return returnDefs.toString();
     }
 
     public String getFirst(){
-        return getWord(gloss.firstKey());
+        return get(gloss.firstKey());
     }
 
     public String getLast(){
-        return getWord(gloss.lastKey());
+        return get(gloss.lastKey());
     }
 
     public String getPOS(String word) {
         return word + "\n" + gloss.get(word).getAllPOS();
     }
 
-    public ArrayList<Word.Definition> getDef(String word){
-        return gloss.get(word).getDefinitions();
+    // TODO: can this merge with get(word)
+    public ArrayList<Definitions.Definition> getDef(String word){
+        return gloss.get(word).getAll();
     }
 
     public boolean contains(String word) {
         return gloss.containsKey(word);
     }
 
-    public void changeDef(String word, Word.Definition oldDef, String newDef){
-        gloss.get(word).updateDefinition(oldDef, newDef);
+    public void changeDef(String word, Definitions.Definition oldDef, String newDef){
+        posCount[validPOS.indexOf(oldDef.POS())] -= 1;
+        gloss.get(word).update(oldDef, newDef);
     }
 
-    public void removeDef(String word, Word.Definition oldDef) {
-        gloss.get(word).removeDefinition(oldDef);
-        if(gloss.get(word).numberOfDefinitions() == 0)
+    public void removeDef(String word, Definitions.Definition oldDef) {
+        posCount[validPOS.indexOf(oldDef.POS())] -= 1;
+        defCount--;
+
+        gloss.get(word).remove(oldDef);
+        if(gloss.get(word).numberOfDefinitions() == 0) {
             gloss.remove(word);
+            wordCount--;
+        }
+
     }
 
     public void addDef(String word, String POS, String def) {
-        gloss.get(word).addDefinition(POS, def);
+        gloss.get(word).add(POS, def);
     }
 
 
     public ArrayList<String> getAllWords(){
         return new ArrayList<>(gloss.keySet());
     }
+
+
+    public record Definition(String POS, String def) {}
 
 
 }
