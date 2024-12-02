@@ -92,4 +92,11 @@ public class Glossary {
     public void addDef(String word, String POS, String def) {
         gloss.get(word).addDefinition(POS, def);
     }
+
+
+    public ArrayList<String> getAllWords(){
+        return new ArrayList<>(gloss.keySet());
+    }
+
+
 }

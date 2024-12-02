@@ -1,6 +1,9 @@
 package comprehensive;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -45,7 +48,7 @@ public class Main {
                 case 10 -> option10(glossary,scanner);
 
                 case 11 -> {
-                    System.out.println("Exiting...");
+                    System.out.println(" - Exiting application...");
                     scanner.close();
                     application = false;
                 }
@@ -53,11 +56,8 @@ public class Main {
                 default -> System.out.println("Invalid input. Try again..");
 
             }
+
         }
-
-
-
-
 
     }
 
@@ -235,8 +235,39 @@ public class Main {
         System.out.println("Successfully added!\n");
     }
 
-    
-    public static void option10(Glossary glossary, Scanner scanner){
+    //TODO Check IOEx error - does it have to be in main method?
+    public static void option10(Glossary glossary, Scanner scanner) throws IOException {
+        scanner.nextLine(); //Buffer Clear
+        System.out.print("Type a filename with path: ");
+        String fileName = scanner.nextLine();
+
+        //User confirmation of the file path
+
+        try{
+            File file = new File(fileName);
+            FileWriter fileWriter = new FileWriter(file);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+
+
+            //for every word in the glossary
+                 //for every def in the word
+                    //printWriter.println(word::pos::def);
+
+
+            for(String word : glossary.getAllWords()){
+                ArrayList<Word.Definition> definitions = glossary.getDef(word);
+                for(Word.Definition def : definitions){
+                    printWriter.println(word + "::" + def.POS() + "::" + def.def());
+                 }
+            }
+
+            printWriter.close();
+
+        }catch(IOException e){
+            System.out.println("An error occurred while writing to the file: " + e.getMessage());
+            System.out.println(" - Returning to the main menu...\n");
+        }
+
 
     }
     
