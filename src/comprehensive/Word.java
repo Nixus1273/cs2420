@@ -50,3 +50,6 @@ public class Word {
 
     public record Definition(String POS, String def) {}
 }
+
+//1
+
