@@ -11,8 +11,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws IOException {
         //TODO change file location!
-//        Glossary glossary = createGlossary(args[0]);
-        Glossary glossary = createGlossary("C:\\Users\\Ethan Laynor\\Desktop\\Intellij\\cs2420\\2420_glossary.txt");
+        Glossary glossary = createGlossary(args[0]);
+//        Glossary glossary = createGlossary("C:\\Users\\Ethan Laynor\\Desktop\\Intellij\\cs2420\\2420_glossary.txt");
 
         Scanner scanner = new Scanner(System.in);
         boolean application  = true;
@@ -44,7 +44,6 @@ public class Main {
                 case 8 -> option8(glossary, scanner);
                 case 9 -> option9(glossary, scanner);
 
-                //TODO: rewrite all the definitions to the file
                 case 10 -> option10(glossary,scanner);
 
                 case 11 -> {
@@ -83,6 +82,7 @@ public class Main {
 
     public static void option1(Glossary glossary){
         System.out.println("\n" + glossary.getMetadata());
+
     }
 
 
@@ -102,7 +102,7 @@ public class Main {
         }
 
         System.out.println("\nThe words between " + start + " and " + end + " are: ");
-        System.out.println(glossary.getWordsInRange(start, end));
+        System.out.println(glossary.getInRange(start, end));
     }
 
     
@@ -115,7 +115,7 @@ public class Main {
             return;
         }
 
-        System.out.println(glossary.getWord(userSelection));
+        System.out.println(glossary.get(userSelection));
     }
 
     
@@ -149,7 +149,7 @@ public class Main {
             return;
         }
 
-        ArrayList<Word.Definition> defs = glossary.getDef(userSelection);
+        ArrayList<Definitions.Definition> defs = glossary.getDef(userSelection);
         int numberChoices = printDefinitions(glossary, userSelection, defs);
 
         System.out.print("\nSelect a definition to update: ");
@@ -183,11 +183,11 @@ public class Main {
             return;
         }
 
-        ArrayList<Word.Definition> defsRemove = glossary.getDef(userSelection);
+        ArrayList<Definitions.Definition> defsRemove = glossary.getDef(userSelection);
 
         StringBuilder returnDefs1 = new StringBuilder(userSelection + "\n");
         int k = 1;
-        for (Word.Definition def : defsRemove) {
+        for (Definitions.Definition def : defsRemove) {
             returnDefs1.append("\t").append(k).append(". ").append(def.POS()).
                     append(".\t").append(def.def()).append("\n");
             k++;
@@ -255,8 +255,8 @@ public class Main {
 
 
             for(String word : glossary.getAllWords()){
-                ArrayList<Word.Definition> definitions = glossary.getDef(word);
-                for(Word.Definition def : definitions){
+                ArrayList<Definitions.Definition> definitions = glossary.getDef(word);
+                for(Definitions.Definition def : definitions){
                     printWriter.println(word + "::" + def.POS() + "::" + def.def());
                  }
             }
@@ -313,10 +313,10 @@ public class Main {
 
 
 
-    public static int printDefinitions(Glossary glossary, String word, ArrayList<Word.Definition> defs) {
+    public static int printDefinitions(Glossary glossary, String word, ArrayList<Definitions.Definition> defs) {
         StringBuilder returnDefs = new StringBuilder("\nDefinitions for " + word + "\n");
         int i = 1;
-        for (Word.Definition def : defs) {
+        for (Definitions.Definition def : defs) {
             returnDefs.append("\t").append(i).append(". ").append(def.POS()).
                     append(".\t").append(def.def()).append("\n");
             i++;
@@ -326,7 +326,6 @@ public class Main {
         return i;
 
     }
-//     possible helper methods: printMainMenu, getUserWordInput (check if the word exists, etc.), printDefinitions,
 
     public static int getValidSelection(Scanner scanner, int numberChoices) {
         if (!scanner.hasNextInt()) {

@@ -2,34 +2,34 @@ package comprehensive;
 
 import java.util.*;
 
-public class Word {
+public class Definitions {
     private final TreeMap<Definition, Definition> definitions = new TreeMap<>(new DefinitionComparator());
     ArrayList<String> validPOS = new ArrayList<>(Arrays.asList(
             "adj", "adv", "conj", "interj", "noun", "prep", "pron", "verb"));
     Integer[] posCount = new Integer[]{0, 0, 0, 0, 0, 0, 0, 0};
 
-    public Word (String POS, String def) {
-        addDefinition(POS, def);
+    public Definitions(String POS, String def) {
+        add(POS, def);
     }
 
-    public ArrayList<Definition> getDefinitions() {
+    public ArrayList<Definition> getAll() {
         return new ArrayList<>(definitions.values());
     }
 
-    public void addDefinition(String POS, String def) {
+    public void add(String POS, String def) {
         Definition d = new Definition(POS, def);
         this.definitions.put(d, d);
         posCount[validPOS.indexOf(POS)] += 1;
     }
 
-    public void updateDefinition(Definition oldDef, String newDef) {
+    public void update(Definition oldDef, String newDef) {
         String oldPOS = definitions.get(oldDef).POS();
-        removeDefinition(oldDef);
+        remove(oldDef);
         Definition d = new Definition(oldPOS, newDef);
         this.definitions.put(d, d);
     }
 
-    public void removeDefinition(Definition d) {
+    public void remove(Definition d) {
         posCount[validPOS.indexOf(d.POS())] -= 1;
         definitions.remove(d);
     }
@@ -48,5 +48,5 @@ public class Word {
         return definitions.size();
     }
 
-    public record Definition(String POS, String def) {}
+    public record Definition(String POS, String def){}
 }
