@@ -7,7 +7,6 @@ public class Glossary {
     private final TreeMap<String, Definitions> gloss = new TreeMap<>(Comparator.naturalOrder());
     private int wordCount;
     private int defCount;
-//    private final ArrayList<String> posCount;
 
     ArrayList<String> validPOS = new ArrayList<>(Arrays.asList(
             "adj", "adv", "conj", "interj", "noun", "prep", "pron", "verb"));
@@ -17,10 +16,7 @@ public class Glossary {
     public Glossary() {
         this.wordCount = 0;
         this.defCount = 0;
-//        this.posCount = new ArrayList<>();
     }
-
-
 
     public void add(String word, String POS, String def) {
         if (contains(word)) {
@@ -30,9 +26,7 @@ public class Glossary {
             wordCount++;
         }
         defCount++;
-
         posCount[validPOS.indexOf(POS)] += 1;
-
     }
 
 
@@ -40,21 +34,9 @@ public class Glossary {
         return  "word: " + wordCount + "\n" +
                 "definitions: " + defCount + "\n" +
                 "definitions per word: " +  String.format("%.3f", (double)defCount / wordCount) + "\n" +
-                "parts of speech: "  + "\n" +
+                "parts of speech: " + getPOSCount() + "\n" +
                 "first word: " + gloss.firstKey() + "\n" +
                 "last word: " + gloss.lastKey() + "\n";
-    }
-
-
-    public String getInRange(String src, String dst) {
-        NavigableSet<String> list = gloss.subMap(src, true, dst, true).navigableKeySet();
-        StringBuilder returnRange = new StringBuilder();
-
-        for (String word: list) {
-            returnRange.append("\t").append(word).append("\n");
-        }
-
-        return returnRange.toString();
     }
 
 
@@ -67,6 +49,11 @@ public class Glossary {
         return returnDefs.toString();
     }
 
+    // TODO: can this merge with get(word)
+    public ArrayList<Definitions.Definition> getDef(String word){
+        return gloss.get(word).getAll();
+    }
+
     public String getFirst(){
         return get(gloss.firstKey());
     }
@@ -75,17 +62,32 @@ public class Glossary {
         return get(gloss.lastKey());
     }
 
+    public String getInRange(String src, String dst) {
+        NavigableSet<String> list = gloss.subMap(src, true, dst, true).navigableKeySet();
+        StringBuilder returnRange = new StringBuilder();
+
+        for (String word: list) {
+            returnRange.append("\t").append(word).append("\n");
+        }
+        return returnRange.toString();
+    }
+
     public String getPOS(String word) {
         return word + "\n" + gloss.get(word).getAllPOS();
     }
 
-    // TODO: can this merge with get(word)
-    public ArrayList<Definitions.Definition> getDef(String word){
-        return gloss.get(word).getAll();
+    public int getPOSCount() {
+        int count = 0;
+        for (Integer integer : posCount) {
+            if (integer > 0) {
+                count++;
+            }
+        }
+        return count;
     }
 
-    public boolean contains(String word) {
-        return gloss.containsKey(word);
+    public void addDef(String word, String POS, String def) {
+        gloss.get(word).add(POS, def);
     }
 
     public void changeDef(String word, Definitions.Definition oldDef, String newDef){
@@ -102,22 +104,13 @@ public class Glossary {
             gloss.remove(word);
             wordCount--;
         }
-
     }
 
-    public void addDef(String word, String POS, String def) {
-        gloss.get(word).add(POS, def);
+    public boolean contains(String word) {
+        return gloss.containsKey(word);
     }
-
 
     public ArrayList<String> getAllWords(){
         return new ArrayList<>(gloss.keySet());
     }
-
-
-    public record Definition(String POS, String def) {}
-
-
 }
-
-//1

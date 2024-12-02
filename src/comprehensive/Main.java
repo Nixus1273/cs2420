@@ -43,21 +43,15 @@ public class Main {
                 case 7 -> option7(glossary, scanner);
                 case 8 -> option8(glossary, scanner);
                 case 9 -> option9(glossary, scanner);
-
                 case 10 -> option10(glossary,scanner);
-
                 case 11 -> {
                     System.out.println(" - Exiting application...");
                     scanner.close();
                     application = false;
                 }
-
                 default -> System.out.println("Invalid input. Try again..");
-
             }
-
         }
-
     }
 
     public static Glossary createGlossary(String file) throws IOException{
@@ -267,11 +261,7 @@ public class Main {
             System.out.println("An error occurred while writing to the file: " + e.getMessage());
             System.out.println(" - Returning to the main menu...\n");
         }
-
-
     }
-    
-
 
     public static void printMainMenu() {
         System.out.println("Main Menu:");
@@ -308,11 +298,6 @@ public class Main {
 
     }
 
-
-
-
-
-
     public static int printDefinitions(Glossary glossary, String word, ArrayList<Definitions.Definition> defs) {
         StringBuilder returnDefs = new StringBuilder("\nDefinitions for " + word + "\n");
         int i = 1;
@@ -340,5 +325,4 @@ public class Main {
 
         return defSelection;
     }
-
 }

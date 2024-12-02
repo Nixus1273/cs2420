@@ -12,10 +12,6 @@ public class Definitions {
         add(POS, def);
     }
 
-    public ArrayList<Definition> getAll() {
-        return new ArrayList<>(definitions.values());
-    }
-
     public void add(String POS, String def) {
         Definition d = new Definition(POS, def);
         this.definitions.put(d, d);
@@ -44,12 +40,13 @@ public class Definitions {
         return allPOS.toString();
     }
 
+    public ArrayList<Definition> getAll() {
+        return new ArrayList<>(definitions.values());
+    }
+
     public int numberOfDefinitions() {
         return definitions.size();
     }
 
     public record Definition(String POS, String def){}
 }
-
-//1
-
