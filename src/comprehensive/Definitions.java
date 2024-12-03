@@ -4,6 +4,7 @@ import java.util.*;
 
 public class Definitions {
     private final TreeMap<Definition, Definition> definitions = new TreeMap<>(new DefinitionComparator());
+
     Integer[] posCount = new Integer[]{0, 0, 0, 0, 0, 0, 0, 0};
     ArrayList<String> validPOS = new ArrayList<>(Arrays.asList(
             "adj", "adv", "conj", "interj", "noun", "prep", "pron", "verb"));
@@ -30,21 +31,21 @@ public class Definitions {
         definitions.remove(d);
     }
 
-    public String getAllPOS() {
-        StringBuilder allPOS = new StringBuilder();
+    public List<String> getAllPOS() {
+        ArrayList<String> allPOS = new ArrayList<>();
         for (int i = 0; i < posCount.length; i++) {
             if (posCount[i] > 0){
-                allPOS.append("\t").append(validPOS.get(i)).append(".\n");
+                allPOS.add(validPOS.get(i));
             }
         }
-        return allPOS.toString();
+        return allPOS;
     }
 
     public ArrayList<Definition> getAll() {
         return new ArrayList<>(definitions.values());
     }
 
-    public int numberOfDefinitions() {
+    public int numberOfDefs() {
         return definitions.size();
     }
 

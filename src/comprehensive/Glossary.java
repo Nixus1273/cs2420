@@ -30,13 +30,12 @@ public class Glossary {
     }
 
 
-    public String getMetadata() {
-        return  "word: " + wordCount + "\n" +
-                "definitions: " + defCount + "\n" +
-                "definitions per word: " +  String.format("%.3f", (double)defCount / wordCount) + "\n" +
-                "parts of speech: " + getPOSCount() + "\n" +
-                "first word: " + gloss.firstKey() + "\n" +
-                "last word: " + gloss.lastKey() + "\n";
+    public String[] getMetadata() {
+        return new String[]{String.valueOf(wordCount),
+                String.valueOf(defCount),
+                String.valueOf(getPOSCount()),
+                gloss.firstKey(),
+                gloss.lastKey()};
     }
 
 
@@ -62,18 +61,12 @@ public class Glossary {
         return get(gloss.lastKey());
     }
 
-    public String getInRange(String src, String dst) {
-        NavigableSet<String> list = gloss.subMap(src, true, dst, true).navigableKeySet();
-        StringBuilder returnRange = new StringBuilder();
-
-        for (String word: list) {
-            returnRange.append("\t").append(word).append("\n");
-        }
-        return returnRange.toString();
+    public NavigableSet<String> getInRange(String src, String dst) {
+        return gloss.subMap(src, true, dst, true).navigableKeySet();
     }
 
-    public String getPOS(String word) {
-        return word + "\n" + gloss.get(word).getAllPOS();
+    public List<String> getPOS(String word) {
+        return gloss.get(word).getAllPOS();
     }
 
     public int getPOSCount() {
@@ -100,7 +93,7 @@ public class Glossary {
         defCount--;
 
         gloss.get(word).remove(oldDef);
-        if(gloss.get(word).numberOfDefinitions() == 0) {
+        if(gloss.get(word).numberOfDefs() == 0) {
             gloss.remove(word);
             wordCount--;
         }

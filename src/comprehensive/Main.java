@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        //TODO change file location!
+        //TODO: change file location!
         Glossary glossary = createGlossary(args[0]);
 //        Glossary glossary = createGlossary("C:\\Users\\Ethan Laynor\\Desktop\\Intellij\\cs2420\\2420_glossary.txt");
 
@@ -72,11 +72,15 @@ public class Main {
         return glossary;
     }
 
-
-
     public static void option1(Glossary glossary){
-        System.out.println("\n" + glossary.getMetadata());
-
+        String[] data = glossary.getMetadata();
+        System.out.println("words: " + data[0] + "\n" +
+                "definitions: " + data[1] + "\n" +
+                "definitions per word: " +
+                String.format("%.3f", Double.parseDouble(data[1]) / Double.parseDouble(data[0])) + "\n" +
+                "parts of speech: " + data[2] + "\n" +
+                "first word: " + data[3] + "\n" +
+                "last word: " + data[4] + "\n");
     }
 
 
@@ -85,18 +89,23 @@ public class Main {
 
         System.out.print("Starting word: ");
         String start = scanner.nextLine();
-        if(!wordInGlossary(glossary, start)){
+        if(wordNotInGlossary(glossary, start)){
             return;
         }
 
         System.out.print("Ending word: ");
         String end = scanner.nextLine();
-        if(!wordInGlossary(glossary, end)){
+        if(wordNotInGlossary(glossary, end)){
             return;
         }
 
         System.out.println("\nThe words between " + start + " and " + end + " are: ");
-        System.out.println(glossary.getInRange(start, end));
+        StringBuilder returnRange = new StringBuilder();
+
+        for (String word: glossary.getInRange(start, end)) {
+            returnRange.append("\t").append(word).append("\n");
+        }
+        System.out.println(returnRange);
     }
 
     
@@ -105,7 +114,7 @@ public class Main {
 
         System.out.print("\nSelect a word: ");
         String userSelection = scanner.nextLine();
-        if(!wordInGlossary(glossary, userSelection)){
+        if(wordNotInGlossary(glossary, userSelection)){
             return;
         }
 
@@ -127,11 +136,13 @@ public class Main {
         scanner.nextLine();
         System.out.print("\nSelect a word: ");
         String userSelection = scanner.nextLine();
-        if(!wordInGlossary(glossary, userSelection)){
+        if(wordNotInGlossary(glossary, userSelection)){
             return;
         }
 
-        System.out.println(glossary.getPOS(userSelection));
+        for (String s : glossary.getPOS(userSelection)) {
+            System.out.println("\t" + s + ".");
+        }
     }
 
     public static void option7(Glossary glossary, Scanner scanner){
@@ -139,7 +150,7 @@ public class Main {
 
         System.out.print("Select a word: ");
         String userSelection = scanner.nextLine();
-        if(!wordInGlossary(glossary, userSelection)){
+        if(wordNotInGlossary(glossary, userSelection)){
             return;
         }
 
@@ -173,7 +184,7 @@ public class Main {
 
         System.out.print("\nSelect a word: ");
         String userSelection = scanner.nextLine();
-        if(!wordInGlossary(glossary, userSelection)){
+        if(wordNotInGlossary(glossary, userSelection)){
             return;
         }
 
@@ -287,14 +298,14 @@ public class Main {
         return null;
     }
 
-    public static boolean wordInGlossary(Glossary glossary, String word){
+    public static boolean wordNotInGlossary(Glossary glossary, String word){
         if(!glossary.contains(word)){
             System.out.println(" - Word ['" + word + "'] not found in the glossary. Please try again.");
             System.out.println(" - Returning to the main menu...\n");
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
 
     }
 
