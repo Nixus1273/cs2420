@@ -9,91 +9,99 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        //TODO change file location!
-        Glossary glossary = createGlossary(args[0]);
-//        Glossary glossary = createGlossary("C:\\Users\\Ethan Laynor\\Desktop\\Intellij\\cs2420\\2420_glossary.txt");
-
+    public static void main(String[] args){
         Scanner scanner = new Scanner(System.in);
-        boolean application  = true;
+        Glossary glossary = new Glossary();
+
+        boolean application = false;
+
+        try {
+//            application = createGlossary(args[0], glossary);
+            application = createGlossary("C:\\Users\\Ethan Laynor\\Desktop\\Intellij\\cs2420\\2420_glossary.txt", glossary);
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the file: " + e.getMessage());
+            System.out.println(" - Exiting Application...\n");
+        }
 
 
-        while (application ) {
+        while (application) {
             printMainMenu();
 
             int choice;
-            while (true) {
+            do {
                 System.out.print("Select an option: ");
-                if (scanner.hasNextInt()) {
-                    choice = scanner.nextInt();
-                    break;
-                } else {
-                    System.out.println("Invalid input");
-                    scanner.next();
+                choice = getValidSelection(scanner, 11);
+
+                if (choice == -1) {
+                    System.out.println(" - Invalid input. Please try again...\n");
                 }
-            }
+            } while (choice == -1);
+
 
             switch (choice) {
                 case 1 -> option1(glossary);
                 case 2 -> option2(glossary, scanner);
                 case 3 -> option3(glossary, scanner);
-                case 4 -> System.out.println(glossary.getFirst());
-                case 5 -> System.out.println(glossary.getLast());
+                case 4 -> option4(glossary);
+                case 5 -> option5(glossary);
                 case 6 -> option6(glossary, scanner);
                 case 7 -> option7(glossary, scanner);
                 case 8 -> option8(glossary, scanner);
                 case 9 -> option9(glossary, scanner);
-                case 10 -> option10(glossary,scanner);
+                case 10 -> {
+                    try{
+                        option10(glossary, scanner);
+                    } catch (IOException e){
+                        System.out.println("An error occurred while saving the glossary: " + e.getMessage());
+                    }
+                }
                 case 11 -> {
                     System.out.println(" - Exiting application...");
                     scanner.close();
                     application = false;
                 }
                 default -> System.out.println("Invalid input. Try again..");
+
             }
+
         }
+
     }
 
-    public static Glossary createGlossary(String file) throws IOException{
-        Glossary glossary = new Glossary();
 
+    public static boolean createGlossary(String file, Glossary glossary) throws IOException {
         try {
-            List<String> lines = Files.readAllLines(Paths.get(file));
 
-            // build glossary from the file
+            List<String> lines = Files.readAllLines(Paths.get(file));
             for (String line : lines) {
                 String[] data = line.split("::");
                 glossary.add(data[0], data[1], data[2]);
             }
-
+            return true;
         } catch (IOException e) {
-            throw new IOException("File not found...");
+            throw new IOException("File not found..." + e.getMessage());
         }
-        return glossary;
     }
 
 
 
     public static void option1(Glossary glossary){
         System.out.println("\n" + glossary.getMetadata());
-
     }
 
 
     public static void option2(Glossary glossary, Scanner scanner){
-        scanner.nextLine(); //Buffer Clear
+
 
         System.out.print("Starting word: ");
         String start = scanner.nextLine();
-        if(!wordInGlossary(glossary, start)){
-            return;
-        }
+        if(wordNotInGlossary(glossary, start)) return;
+
 
         System.out.print("Ending word: ");
         String end = scanner.nextLine();
-        if(!wordInGlossary(glossary, end)){
-            return;
-        }
+        if(wordNotInGlossary(glossary, end)) return;
+
 
         System.out.println("\nThe words between " + start + " and " + end + " are: ");
         System.out.println(glossary.getInRange(start, end));
@@ -101,53 +109,49 @@ public class Main {
 
     
     public static void option3(Glossary glossary, Scanner scanner){
-        scanner.nextLine(); //Buffer Clear
 
-        System.out.print("\nSelect a word: ");
+
+        System.out.print("Select a word: ");
         String userSelection = scanner.nextLine();
-        if(!wordInGlossary(glossary, userSelection)){
-            return;
-        }
+        if(wordNotInGlossary(glossary, userSelection))return;
 
-        System.out.println(glossary.get(userSelection));
+
+        System.out.println("\n" + glossary.getAllDefs(userSelection));
     }
 
     
     public static void option4(Glossary glossary){
-
+        System.out.println("\n" + glossary.getFirstDefs());
     }
 
     
     public static void option5(Glossary glossary){
-
+        System.out.println("\n" + glossary.getLastDefs());
     }
     
     // Gets all parts of speech for a given word
     public static void option6(Glossary glossary, Scanner scanner){
-        scanner.nextLine();
-        System.out.print("\nSelect a word: ");
-        String userSelection = scanner.nextLine();
-        if(!wordInGlossary(glossary, userSelection)){
-            return;
-        }
-
-        System.out.println(glossary.getPOS(userSelection));
-    }
-
-    public static void option7(Glossary glossary, Scanner scanner){
-        scanner.nextLine(); //Buffer Clear
 
         System.out.print("Select a word: ");
         String userSelection = scanner.nextLine();
-        if(!wordInGlossary(glossary, userSelection)){
-            return;
-        }
+        if(wordNotInGlossary(glossary, userSelection)) return;
 
-        ArrayList<Definitions.Definition> defs = glossary.getDef(userSelection);
-        int numberChoices = printDefinitions(glossary, userSelection, defs);
+        System.out.println("\n" + glossary.getPOS(userSelection));
+    }
+
+    public static void option7(Glossary glossary, Scanner scanner){
+
+        System.out.print("Select a word: ");
+        String userSelection = scanner.nextLine();
+        if(wordNotInGlossary(glossary, userSelection)) return;
+
+        //TODO would defs ever be empty?
+        ArrayList<Definitions.SingleDefinition> defs = glossary.getDefList(userSelection);
+        int numberChoices = printDefinitions(userSelection, defs);
 
         System.out.print("\nSelect a definition to update: ");
 
+        //TODO if defSelection is invaild should we ask promt for another input? Because if they want to leave they could use main menu
         int defSelection = getValidSelection(scanner, numberChoices);
         if (defSelection == -1){
                 System.out.println("Invalid selection");
@@ -160,53 +164,52 @@ public class Main {
             return;
         }
 
-        scanner.nextLine(); //Buffer Clear
+
         System.out.print("\nType a new definition: ");
         String newDef = scanner.nextLine();
 
         glossary.changeDef(userSelection, defs.get(defSelection - 1), newDef);
+        System.out.println(" - Definition updated\n");
     }
 
 
     public static void option8(Glossary glossary, Scanner scanner){
-        scanner.nextLine(); //Buffer Clear
 
-        System.out.print("\nSelect a word: ");
+        System.out.print("Select a word: ");
         String userSelection = scanner.nextLine();
-        if(!wordInGlossary(glossary, userSelection)){
-            return;
-        }
+        if(wordNotInGlossary(glossary, userSelection)) return;
 
-        ArrayList<Definitions.Definition> defsRemove = glossary.getDef(userSelection);
 
-        StringBuilder returnDefs1 = new StringBuilder(userSelection + "\n");
-        int k = 1;
-        for (Definitions.Definition def : defsRemove) {
-            returnDefs1.append("\t").append(k).append(". ").append(def.POS()).
-                    append(".\t").append(def.def()).append("\n");
-            k++;
-        }
-
-        returnDefs1.append("\t").append(k).append(". ").append("Back to main menu\n");
-        System.out.print(returnDefs1);
+        ArrayList<Definitions.SingleDefinition> defs = glossary.getDefList(userSelection);
+        int numberChoices = printDefinitions(userSelection, defs);
 
         System.out.print("\nSelect a definition to remove: ");
-        int userRemoveSelection = scanner.nextInt();
-        //TODO Doesn't work
-        if (userRemoveSelection == k)
+        int defSelection = getValidSelection(scanner, numberChoices);
+
+        if (defSelection == -1){
+            System.out.println("Invalid selection");
+            System.out.println(" - Returning to the main menu...\n");
             return;
+        }
 
-        glossary.removeDef(userSelection, defsRemove.get(userRemoveSelection - 1));
+        if (defSelection == numberChoices) {
+            System.out.println(" - Returning to the main menu...\n");
+            return;
+        }
 
-        //TODO print out if a definition or a word has been deleted - check example of logic proposition
+        System.out.println("\n - Definition removed");
+        if(glossary.removeDef(userSelection, defs.get(defSelection - 1)))
+            System.out.println(" - Word [" + userSelection + "] removed");
+
+        System.out.println();
+
     }
 
     
     public static void option9(Glossary glossary, Scanner scanner){
-        scanner.nextLine();
-        System.out.print("\nType a word: ");
+        System.out.print("Type a word: ");
         String userSelection = scanner.nextLine();
-        System.out.print("\nValid parts of speech: [noun, verb, adj, adv, pron, prep, conj, interj]\n");
+        System.out.print("Valid parts of speech: [noun, verb, adj, adv, pron, prep, conj, interj]\n");
 
         ArrayList<String> validPOS = new ArrayList<>(Arrays.asList(
                 "adj", "adv", "conj", "interj", "noun", "prep", "pron", "verb"));
@@ -217,16 +220,13 @@ public class Main {
             newEntryPOS = scanner.nextLine();
         } while (!validPOS.contains(newEntryPOS));
 
-        System.out.print("\nType a definition: ");
+        System.out.print("Type a definition: ");
         String newEntryDef = scanner.nextLine();
 
-        if (glossary.contains(userSelection)) {
-            glossary.addDef(userSelection, newEntryPOS, newEntryDef);
-        } else {
-            glossary.add(userSelection, newEntryPOS, newEntryDef);
-        }
+        glossary.add(userSelection, newEntryPOS, newEntryDef);
 
-        System.out.println("Successfully added!\n");
+
+        System.out.println("\n - Successfully added!\n");
     }
 
     //TODO Check IOEx error - does it have to be in main method?
@@ -235,7 +235,7 @@ public class Main {
         System.out.print("Type a filename with path: ");
         String fileName = scanner.nextLine();
 
-        //User confirmation of the file path
+        //TODO Possible check if user entered the right path?
 
         try{
             File file = new File(fileName);
@@ -243,14 +243,9 @@ public class Main {
             PrintWriter printWriter = new PrintWriter(fileWriter);
 
 
-            //for every word in the glossary
-                 //for every def in the word
-                    //printWriter.println(word::pos::def);
-
-
-            for(String word : glossary.getAllWords()){
-                ArrayList<Definitions.Definition> definitions = glossary.getDef(word);
-                for(Definitions.Definition def : definitions){
+            for(String word : glossary.getAllWordsList()){
+                ArrayList<Definitions.SingleDefinition> definitions = glossary.getDefList(word);
+                for(Definitions.SingleDefinition def : definitions){
                     printWriter.println(word + "::" + def.POS() + "::" + def.def());
                  }
             }
@@ -260,8 +255,13 @@ public class Main {
         }catch(IOException e){
             System.out.println("An error occurred while writing to the file: " + e.getMessage());
             System.out.println(" - Returning to the main menu...\n");
+
         }
+
+
     }
+    
+
 
     public static void printMainMenu() {
         System.out.println("Main Menu:");
@@ -278,30 +278,22 @@ public class Main {
         System.out.println("11.  Quit\n");
     }
 
-    public static String checkUserWordInput(Glossary glossary, Scanner scanner, String input){
-        //TODO If the user inputted a non correct Word will this ask for another word or go back to main menu?
-        //It would need a stop feature if looping because the user might not know what is in the gloss...
 
-
-
-        return null;
-    }
-
-    public static boolean wordInGlossary(Glossary glossary, String word){
+    public static boolean wordNotInGlossary(Glossary glossary, String word){
         if(!glossary.contains(word)){
             System.out.println(" - Word ['" + word + "'] not found in the glossary. Please try again.");
             System.out.println(" - Returning to the main menu...\n");
-            return false;
+            return true;
         }
 
-        return true;
-
+        return false;
     }
 
-    public static int printDefinitions(Glossary glossary, String word, ArrayList<Definitions.Definition> defs) {
+
+    public static int printDefinitions(String word, ArrayList<Definitions.SingleDefinition> defs) {
         StringBuilder returnDefs = new StringBuilder("\nDefinitions for " + word + "\n");
         int i = 1;
-        for (Definitions.Definition def : defs) {
+        for (Definitions.SingleDefinition def : defs) {
             returnDefs.append("\t").append(i).append(". ").append(def.POS()).
                     append(".\t").append(def.def()).append("\n");
             i++;
@@ -313,16 +305,26 @@ public class Main {
     }
 
     public static int getValidSelection(Scanner scanner, int numberChoices) {
-        if (!scanner.hasNextInt()) {
-            scanner.next();
+        String input = scanner.nextLine().trim();
+
+        if (!input.matches("\\d+")) {
             return -1;
         }
 
-        int defSelection = scanner.nextInt();
+        int defSelection = Integer.parseInt(input);
         if (defSelection < 1 || defSelection > numberChoices) {
             return -1;
         }
 
         return defSelection;
     }
+
+
+    public static String userInput(Scanner scanner){
+        if (scanner.hasNextLine()) {
+            return scanner.nextLine().trim(); // Consume and return input, trimming whitespace
+        }
+        return "";
+    }
+
 }

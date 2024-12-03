@@ -3,32 +3,43 @@ package comprehensive;
 import java.util.*;
 
 public class Definitions {
-    private final TreeMap<Definition, Definition> definitions = new TreeMap<>(new DefinitionComparator());
-    Integer[] posCount = new Integer[]{0, 0, 0, 0, 0, 0, 0, 0};
-    ArrayList<String> validPOS = new ArrayList<>(Arrays.asList(
-            "adj", "adv", "conj", "interj", "noun", "prep", "pron", "verb"));
+    private final TreeMap<SingleDefinition, SingleDefinition> definitions = new TreeMap<>(new DefinitionComparator());
+    private final ArrayList<String> validPOS = new ArrayList<>(Arrays.asList( "adj", "adv", "conj", "interj", "noun", "prep", "pron", "verb"));
+    private final Integer[] posCount = new Integer[]{0, 0, 0, 0, 0, 0, 0, 0};
 
     public Definitions(String POS, String def) {
         add(POS, def);
     }
 
+
+    //
+    //-------------------------------------------------------------------------------------------------------------------------
+    //
+
+
     public void add(String POS, String def) {
-        Definition d = new Definition(POS, def);
-        this.definitions.put(d, d);
+        SingleDefinition sd = new SingleDefinition(POS, def);
+        this.definitions.put(sd, sd);
         posCount[validPOS.indexOf(POS)] += 1;
     }
 
-    public void update(Definition oldDef, String newDef) {
-        String oldPOS = definitions.get(oldDef).POS();
-        remove(oldDef);
-        Definition d = new Definition(oldPOS, newDef);
-        this.definitions.put(d, d);
-    }
-
-    public void remove(Definition d) {
+    public void remove(SingleDefinition d) {
         posCount[validPOS.indexOf(d.POS())] -= 1;
         definitions.remove(d);
     }
+
+    //TODO |Check| - Will updating a def only update a def and not a POS?
+    public void update(SingleDefinition oldDef, String newDef) {
+        String oldPOS = definitions.get(oldDef).POS();
+        remove(oldDef);
+        add(oldPOS, newDef);
+    }
+
+
+    //
+    //-------------------------------------------------------------------------------------------------------------------------
+    //
+
 
     public String getAllPOS() {
         StringBuilder allPOS = new StringBuilder();
@@ -40,7 +51,7 @@ public class Definitions {
         return allPOS.toString();
     }
 
-    public ArrayList<Definition> getAll() {
+    public ArrayList<SingleDefinition> getAllDefinitions() {
         return new ArrayList<>(definitions.values());
     }
 
@@ -48,5 +59,13 @@ public class Definitions {
         return definitions.size();
     }
 
-    public record Definition(String POS, String def){}
+
+
+    //
+    //-------------------------------------------------------------------------------------------------------------------------
+    //
+
+
+    public record SingleDefinition(String POS, String def){}
+
 }

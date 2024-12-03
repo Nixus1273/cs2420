@@ -37,17 +37,17 @@ public class GlossaryTest {
 
     @Test
     void testGetDefinitions() {
-        System.out.println(glossary.get("tree"));
+        System.out.println(glossary.getAllDefs("tree"));
     }
 
     @Test
     void testGetFirstWord() {
-        System.out.println(glossary.getFirst());
+        System.out.println(glossary.getFirstDefs());
     }
 
     @Test
     void testGetLastWord() {
-        System.out.println(glossary.getLast());
+        System.out.println(glossary.getLastDefs());
     }
 
     @Test
@@ -57,6 +57,6 @@ public class GlossaryTest {
 
     @Test
     void testWordDef() {
-        System.out.println(glossary.getDef("generic"));
+        System.out.println(glossary.getDefList("generic"));
     }
 }

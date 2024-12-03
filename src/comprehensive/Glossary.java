@@ -5,18 +5,22 @@ import java.util.*;
 public class Glossary {
 
     private final TreeMap<String, Definitions> gloss = new TreeMap<>(Comparator.naturalOrder());
+    private final ArrayList<String> validPOS = new ArrayList<>(Arrays.asList("adj", "adv", "conj", "interj", "noun", "prep", "pron", "verb"));
+    private final Integer[] posCount = new Integer[]{0, 0, 0, 0, 0, 0, 0, 0};
     private int wordCount;
     private int defCount;
-
-    ArrayList<String> validPOS = new ArrayList<>(Arrays.asList(
-            "adj", "adv", "conj", "interj", "noun", "prep", "pron", "verb"));
-    Integer[] posCount = new Integer[]{0, 0, 0, 0, 0, 0, 0, 0};
 
 
     public Glossary() {
         this.wordCount = 0;
         this.defCount = 0;
     }
+
+
+    //
+    //-------------------------------------------------------------------------------------------------------------------------
+    //
+
 
     public void add(String word, String POS, String def) {
         if (contains(word)) {
@@ -30,37 +34,86 @@ public class Glossary {
     }
 
 
-    public String getMetadata() {
-        return  "word: " + wordCount + "\n" +
-                "definitions: " + defCount + "\n" +
-                "definitions per word: " +  String.format("%.3f", (double)defCount / wordCount) + "\n" +
-                "parts of speech: " + getPOSCount() + "\n" +
-                "first word: " + gloss.firstKey() + "\n" +
-                "last word: " + gloss.lastKey() + "\n";
+    public boolean removeDef(String word, Definitions.SingleDefinition oldDef) {
+        posCount[validPOS.indexOf(oldDef.POS())] -= 1;
+        defCount--;
+
+        gloss.get(word).remove(oldDef);
+
+        if(gloss.get(word).numberOfDefinitions() == 0) {
+            gloss.remove(word);
+            wordCount--;
+            return true;
+        }
+
+        return false;
+    }
+
+    //TODO |Check| - Will updating a def only update a def and not a POS?
+    public void changeDef(String word, Definitions.SingleDefinition oldDef, String newDef){
+        gloss.get(word).update(oldDef, newDef);
     }
 
 
-    public String get(String word) {
+    //
+    //-------------------------------------------------------------------------------------------------------------------------
+    //
+
+
+    public boolean contains(String word) {
+        return gloss.containsKey(word);
+    }
+
+
+    //For Option 1
+    public String getMetadata() {
+        int count = 0;
+        for (int i = 0; i < posCount.length; i++) {
+            if (posCount[i] > 0){
+                count++;
+            }
+        }
+
+        return  "\tword: " + wordCount + "\n" +
+                "\tdefinitions: " + defCount + "\n" +
+                "\tdefinitions per word: " +  String.format("%.3f", (double)defCount / wordCount) + "\n" +
+                "\tparts of speech: " + count + "\n" +
+                "\tfirst word: " + gloss.firstKey() + "\n" +
+                "\tlast word: " + gloss.lastKey() + "\n";
+    }
+
+
+    //
+    //-------------------------------------------------------------------------------------------------------------------------
+    //
+
+
+    public String getAllDefs(String word) {
         StringBuilder returnDefs = new StringBuilder(word + "\n");
-        Collection<Definitions.Definition> defs = gloss.get(word).getAll();
-        for (Definitions.Definition def : defs) {
+        Collection<Definitions.SingleDefinition> defs = gloss.get(word).getAllDefinitions();
+        for (Definitions.SingleDefinition def : defs) {
             returnDefs.append("\t").append(def.POS()).append(".\t").append(def.def()).append("\n");
         }
         return returnDefs.toString();
     }
 
-    // TODO: can this merge with get(word)
-    public ArrayList<Definitions.Definition> getDef(String word){
-        return gloss.get(word).getAll();
+    public String getFirstDefs(){
+        return getAllDefs(gloss.firstKey());
     }
 
-    public String getFirst(){
-        return get(gloss.firstKey());
+    public String getLastDefs(){
+        return getAllDefs(gloss.lastKey());
     }
 
-    public String getLast(){
-        return get(gloss.lastKey());
+    public ArrayList<Definitions.SingleDefinition> getDefList(String word){
+        return gloss.get(word).getAllDefinitions();
     }
+
+
+    //
+    //-------------------------------------------------------------------------------------------------------------------------
+    //
+
 
     public String getInRange(String src, String dst) {
         NavigableSet<String> list = gloss.subMap(src, true, dst, true).navigableKeySet();
@@ -76,41 +129,8 @@ public class Glossary {
         return word + "\n" + gloss.get(word).getAllPOS();
     }
 
-    public int getPOSCount() {
-        int count = 0;
-        for (Integer integer : posCount) {
-            if (integer > 0) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public void addDef(String word, String POS, String def) {
-        gloss.get(word).add(POS, def);
-    }
-
-    public void changeDef(String word, Definitions.Definition oldDef, String newDef){
-        posCount[validPOS.indexOf(oldDef.POS())] -= 1;
-        gloss.get(word).update(oldDef, newDef);
-    }
-
-    public void removeDef(String word, Definitions.Definition oldDef) {
-        posCount[validPOS.indexOf(oldDef.POS())] -= 1;
-        defCount--;
-
-        gloss.get(word).remove(oldDef);
-        if(gloss.get(word).numberOfDefinitions() == 0) {
-            gloss.remove(word);
-            wordCount--;
-        }
-    }
-
-    public boolean contains(String word) {
-        return gloss.containsKey(word);
-    }
-
-    public ArrayList<String> getAllWords(){
+    public ArrayList<String> getAllWordsList(){
         return new ArrayList<>(gloss.keySet());
     }
+
 }
