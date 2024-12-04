@@ -102,7 +102,7 @@ public class Glossary {
 
     public String getAllDefs(String word) {
         StringBuilder returnDefs = new StringBuilder(word + "\n");
-        Collection<Definitions.SingleDefinition> defs = gloss.get(word).getAllDefinitions();
+        Collection<Definitions.SingleDefinition> defs = gloss.get(word).getAllDefinitions(); // log(Words)
         for (Definitions.SingleDefinition def : defs) {
             returnDefs.append("\t").append(def.POS()).append(".\t").append(def.def()).append("\n");
         }
@@ -133,16 +133,35 @@ public class Glossary {
 
 
     public String getInRange(String src, String dst) {
-        if(!gloss.containsKey(src) || !gloss.containsKey(dst) || src.compareTo(dst) > 0)
+        if(src.compareTo(dst) > 0)
             return "";
 
+        boolean srcIn = true;
+        boolean dstIn = true;
 
-        NavigableSet<String> list = gloss.subMap(src, true, dst, true).navigableKeySet();
+        if(!gloss.containsKey(src)){
+            srcIn = false;
+            add(src, "noun", "def");
+        }
+
+        if(!gloss.containsKey(dst)){
+            dstIn = false;
+            add(dst, "noun", "def");
+        }
+
+        NavigableSet<String> list = gloss.subMap(src, srcIn, dst, dstIn).navigableKeySet();
+
+        if(!srcIn)
+            gloss.remove(src);
+
+        if(!dstIn)
+            gloss.remove(dst);
+
         StringBuilder returnRange = new StringBuilder();
-
         for (String word: list) {
             returnRange.append("\t").append(word).append("\n");
         }
+
         return returnRange.toString();
     }
 
