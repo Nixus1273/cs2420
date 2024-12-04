@@ -49,7 +49,6 @@ public class Glossary {
         return false;
     }
 
-    //TODO |Check| - Will updating a def only update a def and not a POS?
     public void changeDef(String word, Definitions.SingleDefinition oldDef, String newDef){
         gloss.get(word).update(oldDef, newDef);
     }
@@ -65,21 +64,34 @@ public class Glossary {
     }
 
 
-    //For Option 1
     public String getMetadata() {
         int count = 0;
-        for (int i = 0; i < posCount.length; i++) {
-            if (posCount[i] > 0){
+        for (Integer number : posCount) {
+            if (number > 0) {
                 count++;
             }
         }
 
-        return  "\tword: " + wordCount + "\n" +
-                "\tdefinitions: " + defCount + "\n" +
-                "\tdefinitions per word: " +  String.format("%.3f", (double)defCount / wordCount) + "\n" +
-                "\tparts of speech: " + count + "\n" +
-                "\tfirst word: " + gloss.firstKey() + "\n" +
-                "\tlast word: " + gloss.lastKey() + "\n";
+        String metaData = "words - " + wordCount + "\n" +
+                          "definitions - " + defCount + "\n";
+
+        if(wordCount == 0){
+            metaData += "definitions per word - 0.00\n";
+        }else{
+            metaData += "definitions per word - " +  String.format("%.3f", (double)defCount / wordCount) + "\n";
+        }
+
+        metaData += "parts of speech - " + count + "\n";
+
+        if(gloss.isEmpty()){
+            metaData += "first word - \n" +
+                    "last word - \n";
+        }else{
+            metaData += "first word - " + gloss.firstKey() + "\n" +
+                "last word - " + gloss.lastKey() + "\n";
+        }
+
+        return metaData;
     }
 
 
@@ -98,10 +110,15 @@ public class Glossary {
     }
 
     public String getFirstDefs(){
+        if(gloss.isEmpty())
+            return " - List is empty.\n";
         return getAllDefs(gloss.firstKey());
     }
 
     public String getLastDefs(){
+        if(gloss.isEmpty())
+            return " - List is empty.\n";
+
         return getAllDefs(gloss.lastKey());
     }
 
@@ -116,6 +133,10 @@ public class Glossary {
 
 
     public String getInRange(String src, String dst) {
+        if(!gloss.containsKey(src) || !gloss.containsKey(dst))
+            return "";
+
+
         NavigableSet<String> list = gloss.subMap(src, true, dst, true).navigableKeySet();
         StringBuilder returnRange = new StringBuilder();
 
