@@ -49,6 +49,7 @@ class ArraySortedSetTest {
     void testAddAllMethodNoChange(){
         Collection<Integer> collection = List.of(1, 1, 1, 1);
         integerArraySet.add(1);
+        System.out.println(Arrays.toString(collection.toArray()));
 
         ArrayList<Integer> expected = new ArrayList<>(Arrays.asList(1));
 

@@ -133,7 +133,7 @@ public class Glossary {
 
 
     public String getInRange(String src, String dst) {
-        if(!gloss.containsKey(src) || !gloss.containsKey(dst))
+        if(!gloss.containsKey(src) || !gloss.containsKey(dst) || src.compareTo(dst) > 0)
             return "";
 
 
