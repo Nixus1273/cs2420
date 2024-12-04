@@ -34,9 +34,12 @@ public class GlossaryTest {
             String[] data = line.split("::");
             glossary.add(data[0], data[1], data[2]);
         }
-        for (int i = 0; i < 10; i++) {
-            repeatedGlossary.add("r" + i, "adv", "some definition :D");
-        }
+
+        repeatedGlossary.add("remark", "noun", "");
+        repeatedGlossary.add("remember", "noun", "");
+        repeatedGlossary.add("remedy", "noun", "");
+        repeatedGlossary.add("renounce", "noun", "");
+        repeatedGlossary.add("queue", "noun", "");
 
         for (int i = 0; i < 10000; i++) {
             bigGlossary.add( String.valueOf(i), validPOS.get(rng.nextInt(validPOS.size())), "a definition :D");
@@ -147,17 +150,12 @@ public class GlossaryTest {
     @Test
     void testWordInRange2() {
         String expected = """
-                \tr1
-                \tr2
-                \tr3
-                \tr4
-                \tr5
-                \tr6
-                \tr7
-                \tr8
-                \tr9
+                	queue
+                	remark
+                	remedy
+                	remember
                 """;
-        assertEquals(expected, repeatedGlossary.getInRange("r1", "r9"));
+        assertEquals(expected, repeatedGlossary.getInRange("queue", "ren"));
     }
 
     @Test
