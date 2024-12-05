@@ -5,10 +5,19 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * Main class to interact with the Glossary application.
+ * Provides a menu-based interface to manage a glossary of words and their definitions.
+ *
+ * @author - Brandon Flickinger and Ethan Laynor
+ * @version - December 5, 2024
+ */
 public class Main {
-
-
-
+    /**
+     * Handles the initialization of the glossary application and manages the main user interaction loop.
+     *
+     * @param args Command-line arguments. If a file path is provided, it attempts to load a glossary from the file.
+     */
     public static void main(String[] args){
         Glossary glossary = new Glossary();
 
@@ -23,8 +32,6 @@ public class Main {
             }
         }
 
-
-
         while (application) {
             printMainMenu();
 
@@ -37,7 +44,6 @@ public class Main {
                     System.out.println("\nInvalid selection\n");
                 }
             } while (choice == -1);
-
 
             switch (choice) {
                 case 1 -> option1(glossary);
@@ -63,10 +69,16 @@ public class Main {
                 default -> System.out.println("Invalid input. Try again.");
             }
         }
-        //TODO Scanner close here?
     }
 
-
+    /**
+     * Loads a glossary from a file.
+     *
+     * @param file     The file path containing the glossary data.
+     * @param glossary The Glossary object to populate.
+     * @return True if the glossary was successfully loaded; false otherwise.
+     * @throws IOException If the file cannot be found or read.
+     */
     public static boolean createGlossary(String file, Glossary glossary) throws IOException {
         try {
             List<String> lines = Files.readAllLines(Paths.get(file));
@@ -81,12 +93,20 @@ public class Main {
         }
     }
 
-
+    /**
+     * Prints the metadata of the glossary.
+     *
+     * @param glossary The Glossary object to retrieve metadata from.
+     */
     public static void option1(Glossary glossary){
         System.out.println("\n" + glossary.getMetadata());
     }
 
-
+    /**
+     * Displays all words in the glossary within a specified range.
+     *
+     * @param glossary The Glossary object to retrieve words from.
+     */
     public static void option2(Glossary glossary){
         System.out.print("Starting word: ");
         String start = userInput();
@@ -98,26 +118,41 @@ public class Main {
         System.out.println(glossary.getInRange(start, end));
     }
 
-    
+    /**
+     * Displays all definitions for a user-selected word in the glossary.
+     *
+     * @param glossary The Glossary object to retrieve definitions from.
+     */
     public static void option3(Glossary glossary){
         System.out.print("Select a word: ");
         String userSelection = userInput();
         if(wordNotInGlossary(glossary, userSelection))return;
-
-
         System.out.println("\n" + glossary.getAllDefs(userSelection));
     }
 
-    
+    /**
+     * Displays the first word and its definitions in the glossary.
+     *
+     * @param glossary The Glossary object to retrieve the first word from.
+     */
     public static void option4(Glossary glossary){
         System.out.println("\n" + glossary.getFirstDefs());
     }
 
-    
+    /**
+     * Displays the last word and its definitions in the glossary.
+     *
+     * @param glossary The Glossary object to retrieve the last word from.
+     */
     public static void option5(Glossary glossary){
         System.out.println("\n" + glossary.getLastDefs());
     }
-    
+
+    /**
+     * Displays all parts of speech for a user-selected word.
+     *
+     * @param glossary The Glossary object to retrieve parts of speech from.
+     */
     public static void option6(Glossary glossary){
         System.out.print("Select a word: ");
         String userSelection = userInput();
@@ -126,7 +161,11 @@ public class Main {
         System.out.println("\n" + glossary.getPOS(userSelection));
     }
 
-
+    /**
+     * Allows the user to update a specific definition for a selected word.
+     *
+     * @param glossary The Glossary object containing the word and definition to update.
+     */
     public static void option7(Glossary glossary){
         System.out.print("Select a word: ");
         String userSelection = userInput();
@@ -150,7 +189,6 @@ public class Main {
             return;
         }
 
-
         System.out.print("Type a new definition: ");
         String newDef = userInput();
 
@@ -158,9 +196,12 @@ public class Main {
         System.out.println("\nDefinition updated\n");
     }
 
-
+    /**
+     * Allows the user to delete a specific definition or an entire word from the glossary.
+     *
+     * @param glossary The Glossary object containing the word and definition to delete.
+     */
     public static void option8(Glossary glossary){
-
         System.out.print("Select a word: ");
         String userSelection = userInput();
         if(wordNotInGlossary(glossary, userSelection)) return;
@@ -172,14 +213,13 @@ public class Main {
         System.out.print("\nSelect a definition to remove: ");
         int defSelection = getValidSelection(numberChoices);
 
-        if (defSelection == -1){
-            System.out.println("Invalid selection");
-
-            return;
+        while(defSelection == -1){
+            System.out.println("- Invalid selection");
+            numberChoices = printDefinitions(userSelection, defs);
+            System.out.print("\nSelect a definition to update: ");
+            defSelection = getValidSelection(numberChoices);
         }
 
-
-        //TODO Keep or remove if causing errors
         if (defSelection == numberChoices) {
             System.out.println(" - Returning to the main menu...\n");
             return;
@@ -191,7 +231,11 @@ public class Main {
         System.out.println();
     }
 
-    
+    /**
+     * Allows the user to add a new word, part of speech, and definition to the glossary.
+     *
+     * @param glossary The Glossary object to which the new entry will be added.
+     */
     public static void option9(Glossary glossary){
         System.out.print("Type a word: ");
         String userSelection = userInput();
@@ -210,12 +254,15 @@ public class Main {
         String newEntryDef = userInput();
 
         glossary.add(userSelection, newEntryPOS, newEntryDef);
-
-
         System.out.println("\nSuccessfully added!\n");
     }
 
-
+    /**
+     * Saves the current glossary to a specified file.
+     *
+     * @param glossary The Glossary object containing the words and definitions to save.
+     * @throws IOException If an error occurs while writing to the file.
+     */
     public static void option10(Glossary glossary) throws IOException {
         System.out.print("Type a filename with path: ");
         String fileName = userInput();
@@ -240,7 +287,9 @@ public class Main {
         }
     }
 
-
+    /**
+     * Prints the main menu options for the application.
+     */
     public static void printMainMenu() {
         System.out.println("Main Menu:");
         System.out.println("1.  Get metadata");
@@ -256,7 +305,13 @@ public class Main {
         System.out.println("11.  Quit\n");
     }
 
-
+    /**
+     * Checks if a word exists in the glossary.
+     *
+     * @param glossary The Glossary object to search for the word.
+     * @param word     The word to check for existence in the glossary.
+     * @return True if the word is not found in the glossary; false otherwise.
+     */
     public static boolean wordNotInGlossary(Glossary glossary, String word){
         if(!glossary.contains(word)){
             System.out.println("\n" + word  + " not found\n");
@@ -265,7 +320,13 @@ public class Main {
         return false;
     }
 
-
+    /**
+     * Prints the list of definitions for a given word and provides an option to return to the main menu.
+     *
+     * @param word The word for which definitions will be printed.
+     * @param defs A list of definitions associated with the word.
+     * @return The number of choices printed, including the "Back to main menu" option.
+     */
     public static int printDefinitions(String word, ArrayList<Definitions.SingleDefinition> defs) {
         StringBuilder returnDefs = new StringBuilder("\nDefinitions for " + word + "\n");
         int i = 1;
@@ -277,9 +338,14 @@ public class Main {
         returnDefs.append("\t").append(i).append(". ").append("Back to main menu\n");
         System.out.print(returnDefs);
         return i;
-
     }
 
+    /**
+     * Validates a numeric input for a menu selection.
+     *
+     * @param numberChoices The number of valid menu options.
+     * @return The validated choice if valid; -1 otherwise.
+     */
     public static int getValidSelection(int numberChoices) {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine().trim();
@@ -292,16 +358,16 @@ public class Main {
         if (defSelection < 1 || defSelection > numberChoices) {
             return -1;
         }
-
         return defSelection;
     }
 
+    /**
+     * Retrieves user input from the console.
+     *
+     * @return The user's input as a string.
+     */
     public static String userInput(){
         Scanner input = new Scanner(System.in);
-
-        //TODO Close the scanner?
-        String userInput = input.nextLine();
-//        input.close();
-        return userInput;
+        return input.nextLine();
     }
 }

@@ -150,17 +150,28 @@ public class GlossaryTest {
     @Test
     void testWordInRange2() {
         String expected = """
-                	queue
                 	remark
                 	remedy
                 	remember
                 """;
-        assertEquals(expected, repeatedGlossary.getInRange("queue", "ren"));
+        assertEquals(expected, repeatedGlossary.getInRange("rem", "ren"));
     }
 
     @Test
     void testWordInRange3() {
         String expected = "";
         assertEquals(expected, glossary.getInRange("queue", "graph"));
+    }
+
+    @Test
+    void testWordInRange4() {
+        String expected = "";
+        assertEquals(expected, glossary.getInRange("123", "456"));
+    }
+
+    @Test
+    void testWordInRange5() {
+        String expected = "";
+        assertEquals(expected, glossary.getInRange("123", "queue"));
     }
 }

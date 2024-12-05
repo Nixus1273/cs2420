@@ -1,40 +1,41 @@
+
 package comprehensive;
 
-import java.io.IOException;
-import java.util.Random;
+import java.io.*;
+        import java.util.Random;
 
-public class GlossaryGetTimingExperiment extends TimingExperiment {
-    private final static String problemSizeDescription = "Words * Defs";
+public class GlossaryMetaDataTimingExperiment extends TimingExperiment {
+    private final static String problemSizeDescription = "listSize";
     private final static int problemSizeMin = 100000;
     private final static int problemSizeCount = 25;
     private final static int problemSizeStep = 10000;
     private final static int experimentIterationCount = 50;
 
-    private Glossary glossary;
+    private final Glossary glossary = new Glossary();
     private final Random rng = new Random();
-    private String randomWord;
+    private int randomWord;
+    private Definitions.SingleDefinition oldDef;
 
     public static void main(String[] args) throws IOException {
-        TimingExperiment timingExperiment = new GlossaryGetTimingExperiment();
+        TimingExperiment timingExperiment = new GlossaryMetaDataTimingExperiment();
         timingExperiment.printResults();
     }
 
-    public GlossaryGetTimingExperiment() {
+    public GlossaryMetaDataTimingExperiment() throws FileNotFoundException {
         super(problemSizeDescription, problemSizeMin, problemSizeCount, problemSizeStep, experimentIterationCount);
     }
 
     @Override
     protected void setupExperiment(int problemSize) throws IOException {
-        glossary = new Glossary();
         for(int word = 0; word < Math.sqrt(problemSize); word++) {
-            for(int def = 0; def < Math.sqrt(problemSize); def++)
+            for (int def = 0; def < Math.sqrt(problemSize); def++){
                 glossary.add(String.valueOf(word), "noun", String.valueOf(def));
+            }
         }
-        randomWord = String.valueOf(rng.nextInt((int) Math.sqrt(problemSize)));
     }
 
     @Override
     protected void runComputation() throws IOException {
-        glossary.getAllDefs(randomWord);
+        glossary.getMetadata();
     }
 }
